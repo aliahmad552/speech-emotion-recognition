@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import librosa
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
@@ -9,4 +10,4 @@ from tensorflow.keras.models import Sequential
 app = FastAPI()
 
 def preprocess_feature(file):
-    pass
+    y, sr = librosa.load(file)

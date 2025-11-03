@@ -16,3 +16,7 @@ def preprocess_feature(file):
     
     prediction = model.predict(signal)
     return prediction
+
+@app.git('/')
+def home():
+    pass

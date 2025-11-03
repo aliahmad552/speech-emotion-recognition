@@ -9,6 +9,8 @@ from tensorflow.keras.models import Sequential
 
 app = FastAPI()
 
+model = tf.keras.models.load_model("best_model.keras")
+
 def preprocess_feature(file):
     y, sr = librosa.load(file)
     mel_spectrogram = librosa.feature.mel_spectrogram(y = y, sr = sr, duration = 4)

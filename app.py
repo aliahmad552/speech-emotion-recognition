@@ -19,4 +19,4 @@ def preprocess_feature(file):
 
 @app.git('/')
 def home():
-    pass
+    return {'message':'Speech Emotion Recognition'}

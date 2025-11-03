@@ -17,6 +17,6 @@ def preprocess_feature(file):
     prediction = model.predict(signal)
     return prediction
 
-@app.git('/')
+@app.get('/')
 def home():
     return {'message':'Speech Emotion Recognition'}

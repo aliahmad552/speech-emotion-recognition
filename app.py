@@ -15,3 +15,4 @@ def preprocess_feature(file):
     signal = librosa.power_to_db(mel_spectrogram)
     
     prediction = model.predict(signal)
+    return prediction

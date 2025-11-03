@@ -22,3 +22,7 @@ def preprocess_feature(file):
 @app.get('/')
 def home():
     return {'message':'Speech Emotion Recognition'}
+
+@app.get('/health')
+def health():
+    status = 'OK'

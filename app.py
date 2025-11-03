@@ -11,6 +11,8 @@ app = FastAPI()
 
 model = tf.keras.models.load_model("best_model.keras")
 
+MODEL_VERSION = '1.11.0'
+
 def preprocess_feature(file):
     y, sr = librosa.load(file)
     mel_spectrogram = librosa.feature.mel_spectrogram(y = y, sr = sr, duration = 4)
@@ -26,3 +28,4 @@ def home():
 @app.get('/health')
 def health():
     status = 'OK'
+    model = 

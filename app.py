@@ -28,4 +28,4 @@ def home():
 @app.get('/health')
 def health():
     status = 'OK'
-    model = 
+    model = model is not None

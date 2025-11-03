@@ -7,3 +7,6 @@ from fastapi.responses import JSONResponses
 from tensorflow.keras.models import Sequential
 
 app = FastAPI()
+
+def preprocess_feature(file):
+    pass

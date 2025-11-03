@@ -12,4 +12,4 @@ app = FastAPI()
 def preprocess_feature(file):
     y, sr = librosa.load(file)
     mel_spectrogram = librosa.feature.mel_spectrogram(y = y, sr = sr, duration = 4)
-    
+    signal = librosa.power_to_db(mel_spectrogram)

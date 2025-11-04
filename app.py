@@ -33,3 +33,4 @@ def health():
 @app.post("/predict")
 def predict():
     audio = preprocess_audio(audio)
+    model = model.predict(audio)

@@ -36,3 +36,4 @@ def predict():
     prediction = model.predict(audio)
 
     prediction =np.argmax(prediction,axis = 1)
+    return prediction

@@ -31,4 +31,5 @@ def health():
     model = model is not None
 
 @app.post("/predict")
-def predict()
+def predict():
+    audio = preprocess_audio(audio)

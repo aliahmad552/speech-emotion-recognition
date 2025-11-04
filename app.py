@@ -37,3 +37,5 @@ def predict():
 
     prediction =np.argmax(prediction,axis = 1)
     return prediction
+
+# get off the ride

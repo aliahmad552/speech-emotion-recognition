@@ -29,3 +29,6 @@ def home():
 def health():
     status = 'OK'
     model = model is not None
+
+@app.post("/predict")
+def predict()

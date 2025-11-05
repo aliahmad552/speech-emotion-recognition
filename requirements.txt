@@ -1,3 +1,8 @@
-tensorflow
 fastapi
-uvicorn
+uvicorn[standard]
+jinja2
+python-multipart
+tensorflow
+librosa
+soundfile
+numpy

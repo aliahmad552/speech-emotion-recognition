@@ -78,13 +78,11 @@ def prepare_input_from_array(mel_spec: np.ndarray) -> np.ndarray:
         mel_spec = mel_spec[:, :TARGET_WIDTH]
 
     # Normalize per-sample to 0-1 to stabilize input (adjust if model expects different scaling)
-    mn = mel_spec.min()
-    mx = mel_spec.max()
-    if mx - mn == 0:
-        norm = np.zeros_like(mel_spec, dtype=np.float32)
-    else:
-        norm = (mel_spec - mn) / (mx - mn)
+    mn = -3.7909594
+    std = 54.28706
 
+    # Standardize with training mean and std
+    norm = (mel_spec - mn) / std
     # add channel and batch dims: (1, 128, 345, 1)
     inp = np.expand_dims(norm, axis=(0, -1)).astype(np.float32)
     return inp

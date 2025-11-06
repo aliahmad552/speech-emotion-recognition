@@ -5,6 +5,12 @@ The backend is powered by **FastAPI**, and users can upload speech samples to ge
 
 ---
 
+# Demo Pictures
+
+![App Screenshot](static/form.png)
+
+---
+
 ## 🚀 Features
 - Upload a `.wav` audio file via API or frontend.
 - Automatic preprocessing (mel spectrogram generation).
@@ -86,19 +92,19 @@ Response Example:
 ```
 ###  Technologies Used
 
-Python 3.10+
+- Python 3.10+
 
-TensorFlow / Keras
+- TensorFlow / Keras
 
-FastAPI
+- FastAPI
 
-Librosa
+- Librosa
 
-NumPy
+- NumPy
 
-Uvicorn
+- Uvicorn
 
-Jinja2 (for frontend)
+- Jinja2 (for frontend)
 
 ### 📊 Future Improvements
 

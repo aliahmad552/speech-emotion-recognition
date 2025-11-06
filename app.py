@@ -15,13 +15,12 @@ from tensorflow.keras.models import load_model
 from tensorflow.nn import softmax
 
 # ========== CONFIG ==========
-MODEL_PATH = "model.keras"  # place your model here
+MODEL_PATH = "model_mel.keras"  # place your model here
 SR = 44100
 DURATION = 4  # seconds
 N_MELS = 128
 TARGET_WIDTH = 345  # time frames expected by your model
-EMOTIONS = ['anger' 'calm' 'disgust' 'fear' 'happiness' 'neutral' 'sadness'
- 'surprise']
+EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
 # ============================
 
 app = FastAPI(title="Speech Emotion Recognition API")

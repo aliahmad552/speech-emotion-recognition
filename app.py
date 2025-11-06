@@ -20,7 +20,8 @@ SR = 44100
 DURATION = 4  # seconds
 N_MELS = 128
 TARGET_WIDTH = 345  # time frames expected by your model
-EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
+EMOTIONS = ['anger' 'calm' 'disgust' 'fear' 'happiness' 'neutral' 'sadness'
+ 'surprise']
 # ============================
 
 app = FastAPI(title="Speech Emotion Recognition API")
@@ -96,17 +97,12 @@ async def predict(audio_file: UploadFile = File(...)):
             tmp.write(contents)
             tmp_path = tmp.name
 
-        print(f"[DEBUG] Temp path: {tmp_path}")
         mel = process_audio(tmp_path)
-        print(f"[DEBUG] Mel shape: {mel.shape}")
         x = prepare_input_from_array(mel)
-        print(f"[DEBUG] Input shape to model: {x.shape}, dtype={x.dtype}")
 
         preds = model.predict(x)
-        print(f"[DEBUG] Model raw preds shape: {preds.shape}")
 
         top_idx = int(np.argmax(preds))
-        print(f"[DEBUG] Predicted index: {top_idx}")
 
         emotion = EMOTIONS[top_idx]
         logits = preds.squeeze()

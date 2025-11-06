@@ -20,14 +20,13 @@ SR = 44100
 DURATION = 4  # seconds
 N_MELS = 128
 TARGET_WIDTH = 345  # time frames expected by your model
-EMOTIONS = ['anger', 'calm', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
+EMOTIONS = ['anger', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
 # ============================
 
 app = FastAPI(title="Speech Emotion Recognition API")
 
 # serve templates folder
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # load model on startup
 @app.on_event("startup")
@@ -91,45 +90,47 @@ def prepare_input_from_array(mel_spec: np.ndarray) -> np.ndarray:
 
 @app.post("/predict", response_class=JSONResponse)
 async def predict(audio_file: UploadFile = File(...)):
-    # accept only wav
-    if not audio_file.filename.lower().endswith(".wav"):
-        raise HTTPException(status_code=400, detail="Only .wav files are supported. Please upload a WAV audio file.")
-
-    # save to a temp file then process because librosa needs a path or file-like object
     try:
         contents = await audio_file.read()
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             tmp.write(contents)
             tmp_path = tmp.name
 
-        # Ensure file is readable by soundfile/librosa (sometimes header issues for uploads)
-        # Re-write with soundfile to ensure consistent format
-        data, samplerate = sf.read(tmp_path, dtype='float32')
-        sf.write(tmp_path, data, SR)
-
-        mel = process_audio(tmp_path)  # uses your function
+        print(f"[DEBUG] Temp path: {tmp_path}")
+        mel = process_audio(tmp_path)
+        print(f"[DEBUG] Mel shape: {mel.shape}")
         x = prepare_input_from_array(mel)
-        preds = model.predict(x)  # shape (1, num_classes)
-        probs = softmax(preds).numpy().squeeze()  # ensure probabilities
-        top_idx = int(np.argmax(probs))
+        print(f"[DEBUG] Input shape to model: {x.shape}, dtype={x.dtype}")
+
+        preds = model.predict(x)
+        print(f"[DEBUG] Model raw preds shape: {preds.shape}")
+
+        top_idx = int(np.argmax(preds))
+        print(f"[DEBUG] Predicted index: {top_idx}")
+
         emotion = EMOTIONS[top_idx]
+        logits = preds.squeeze()
+        exp_logits = np.exp(logits - np.max(logits))
+        probs = exp_logits / np.sum(exp_logits)
         confidence = float(probs[top_idx])
 
-        # detailed per-class probabilities
         class_probs = {label: float(probs[i]) for i, label in enumerate(EMOTIONS)}
-
         return JSONResponse({
             "emotion": emotion,
             "confidence": round(confidence, 4),
             "probs": class_probs
         })
+
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
     finally:
         try:
             os.remove(tmp_path)
         except Exception:
             pass
+
 
 @app.get("/", response_class=HTMLResponse)
 def form(request: Request):

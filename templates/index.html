@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Speech Emotion Recognition</title>
+    <style>
+      body { font-family: Inter, Arial, sans-serif; max-width:800px; margin:30px auto; }
+      .card { padding:20px; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.06); }
+      .upload { margin-bottom: 12px; }
+      .btn { background:#2563eb; color:white; padding:10px 16px; border:none; border-radius:6px; cursor:pointer; }
+      .result { margin-top:20px; }
+      .bar { height:16px; border-radius:6px; background:#eee; overflow:hidden; }
+      .bar > i { display:block; height:100%; background:#60a5fa; width:0%; }
+      .label { display:flex; justify-content:space-between; margin-top:6px; font-size:14px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Speech Emotion Recognition</h2>
+      <p>Upload a WAV audio (max 4s used). The model returns emotion + confidence.</p>
+
+      <form id="uploadForm">
+        <input class="upload" id="fileInput" type="file" accept=".wav" required />
+        <br/>
+        <button class="btn" type="submit">Upload & Predict</button>
+      </form>
+
+      <div id="output" class="result" style="display:none;">
+        <h3>Prediction</h3>
+        <div id="predSummary"></div>
+        <div id="probs"></div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('uploadForm');
+      const fileInput = document.getElementById('fileInput');
+      const output = document.getElementById('output');
+      const predSummary = document.getElementById('predSummary');
+      const probsDiv = document.getElementById('probs');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!fileInput.files.length) return alert('Choose a WAV file.');
+        const file = fileInput.files[0];
+        const fd = new FormData();
+        fd.append('audio_file', file, file.name);
+
+        predSummary.innerHTML = 'Predicting...';
+        probsDiv.innerHTML = '';
+        output.style.display = 'block';
+
+        try {
+          const res = await fetch('/predict', { method: 'POST', body: fd });
+          if (!res.ok) {
+            const err = await res.json();
+            predSummary.innerHTML = 'Error: ' + (err.detail || res.statusText);
+            return;
+          }
+          const data = await res.json();
+          predSummary.innerHTML = `<strong>${data.emotion}</strong> (confidence: ${ (data.confidence*100).toFixed(2) }%)`;
+
+          // show bars
+          const probs = data.probs;
+          const labels = Object.keys(probs);
+          labels.forEach(l => {
+            const p = probs[l];
+            const wrapper = document.createElement('div');
+            wrapper.style.marginTop = '8px';
+            const lbl = document.createElement('div');
+            lbl.className = 'label';
+            lbl.innerHTML = `<span>${l}</span><span>${(p*100).toFixed(2)}%</span>`;
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            const inner = document.createElement('i');
+            inner.style.width = Math.max(1, p*100) + '%';
+            bar.appendChild(inner);
+            wrapper.appendChild(lbl);
+            wrapper.appendChild(bar);
+            probsDiv.appendChild(wrapper);
+          });
+
+        } catch (err) {
+          predSummary.innerHTML = 'Request failed: ' + err;
+        }
+      });
+    </script>
+  </body>
+</html>
